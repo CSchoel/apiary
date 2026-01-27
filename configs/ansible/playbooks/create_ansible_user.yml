@@ -19,6 +19,7 @@
         path: /etc/sudoers.d/ansible-allow-to-sudo-all
         create: true
         state: present
+        mode: "0640"
         line: "ansible ALL=(ALL) NOPASSWD:ALL"
         # https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/lineinfile_module.html#parameter-validate
         # visudo edits sudoers file safely (with syntax checks)
