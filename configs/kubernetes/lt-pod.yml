@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lt-pod
+  labels:
+    app: languagetool
+spec:
+  containers:
+    - name: lt
+      image: meyay/languagetool:6.6-8
+      ports:
+        - containerPort: 8081
+      env:
+        - name: MAP_UID
+          value: "783"
+        - name: MAP_GID
+          value: "783"
+      volumeMounts:
+        - mountPath: /tmp
+          name: tmpfs-storage
+  volumes:
+    - emptyDir:
+        medium: Memory
+        sizeLimit: 500Mi
+      name: tmpfs-storage

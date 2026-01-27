@@ -1,0 +1,28 @@
+# must be used with inventory_root.yml
+- name: Create ansible user that can be accessed via SSH
+  hosts:
+    - hive-proxmox
+  tasks:
+    - name: Create ansible user
+      ansible.builtin.user:
+        name: ansible
+    - name: Allow current user to SSH into ansible user
+      ansible.builtin.authorized_key:
+        user: ansible
+        key: "{{ lookup('file', '/home/kylar/.ssh/id_rsa.pub') }}"
+    - name: Install sudo
+      ansible.builtin.package:
+        name: sudo
+        state: present
+    - name: Add ansible user to sudoers
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/ansible-allow-to-sudo-all
+        create: true
+        state: present
+        line: "ansible ALL=(ALL) NOPASSWD:ALL"
+        # https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/lineinfile_module.html#parameter-validate
+        # visudo edits sudoers file safely (with syntax checks)
+        # -c is check-only mode
+        # -f provides alternative sudoers file name
+        # %s references the temporary file created by ansible
+        validate: /usr/sbin/visudo -cf %s

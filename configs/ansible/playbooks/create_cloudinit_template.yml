@@ -1,0 +1,67 @@
+- name: Creates a basic debian cloudinit template to use in Terraform
+  hosts:
+    - hive-proxmox
+  debugger: on_failed
+  vars:
+    deb_name: trixie
+    deb_major: "13"
+    deb_date_ver: 20260112-2355
+  vars_files:
+    - ../vars/credentials.yml
+  tasks:
+    - name: Create derived variables
+      ansible.builtin.set_fact:
+        deb_url: "https://cloud.debian.org/images/cloud/{{deb_name}}/{{deb_date_ver}}/debian-{{deb_major}}-generic-amd64-{{deb_date_ver}}.qcow2"
+        template_name: "deb{{ deb_major }}-cloudinit.qcow2"
+    - name: Install dependencies for using proxmox via ansible
+      ansible.builtin.package:
+        name: python3-proxmoxer
+        state: present
+    - name: Pull cloudinit image to import directory
+      community.proxmox.proxmox_template:
+        api_user: terraform-prov@pve
+        api_token_id: terraform
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        api_host: hive
+        content_type: import
+        node: hive
+        url: "{{ deb_url }}"
+        template: "{{ template_name }}"
+        timeout: 300
+    - name: Delete template VM if it already exists
+      community.proxmox.proxmox_kvm:
+        api_user: terraform-prov@pve
+        api_token_id: terraform
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        api_host: hive
+        node: hive
+        vmid: 900
+        state: absent
+    - name: Create new VM using cloud-init with minimal setup (rest is handled by terraform)
+      community.proxmox.proxmox_kvm:
+        api_user: terraform-prov@pve
+        api_token_id: terraform
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        api_host: hive
+        name: "debian{{ deb_major }}-cloudinit"
+        node: hive
+        vmid: 900
+    - name: Attach the cloudinit image to the VM
+      community.proxmox.proxmox_disk:
+        api_user: terraform-prov@pve
+        api_token_id: terraform
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        api_host: hive
+        disk: scsi0
+        import_from: "local:import/{{ template_name }}"
+        storage: local-lvm
+        vmid: 900
+    - name: Turn cloudinit image into template
+      community.proxmox.proxmox_kvm:
+        api_user: terraform-prov@pve
+        api_token_id: terraform
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        api_host: hive
+        node: hive
+        vmid: 900
+        state: template

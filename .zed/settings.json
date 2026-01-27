@@ -1,0 +1,30 @@
+// Folder-specific settings
+//
+// For a full list of overridable settings, and general information on folder-specific settings,
+// see the documentation: https://zed.dev/docs/configuring-zed#settings-files
+{
+  "file_types": {
+    "Ansible": [
+      "**.ansible.yml",
+      "**.ansible.yaml",
+      "**/defaults/*.yml",
+      "**/defaults/*.yaml",
+      "**/meta/*.yml",
+      "**/meta/*.yaml",
+      "**/tasks/*.yml",
+      "**/tasks/*.yaml",
+      "**/handlers/*.yml",
+      "**/handlers/*.yaml",
+      "**/group_vars/*.yml",
+      "**/group_vars/*.yaml",
+      "**/vars/*.yml",
+      "**/vars/*.yaml",
+      "**/host_vars/*.yml",
+      "**/host_vars/*.yaml",
+      "**/playbooks/*.yml",
+      "**/playbooks/*.yaml",
+      "**playbook*.yml",
+      "**playbook*.yaml",
+    ],
+  },
+}
