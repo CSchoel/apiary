@@ -1,29 +1,23 @@
 terraform {
   required_providers {
     proxmox = {
-      source  = "telmate/proxmox"
-      version = "3.0.2-rc07"
+      source  = "bpg/proxmox"
+      version = "0.93.0"
     }
   }
 }
 
-variable "proxmox_api_url" {
+variable "proxmox_endpoint" {
   type = string
 }
 
-variable "proxmox_api_token_id" {
-  type      = string
-  sensitive = true
-}
-
-variable "proxmox_api_token_secret" {
+variable "proxmox_api_token" {
   type      = string
   sensitive = true
 }
 
 provider "proxmox" {
-  pm_api_url          = var.proxmox_api_url
-  pm_api_token_id     = var.proxmox_api_token_id
-  pm_api_token_secret = var.proxmox_api_token_secret
-  pm_tls_insecure     = true
+  endpoint  = var.proxmox_endpoint
+  api_token = var.proxmox_api_token
+  insecure  = true # accept self-signed TLS certificate
 }
