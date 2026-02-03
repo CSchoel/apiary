@@ -3,19 +3,14 @@
 # - https://www.youtube.com/watch?v=8D2lN7MEavM
 # - https://www.youtube.com/watch?v=sJlnXwZDdso
 # - https://registry.terraform.io/providers/bpg/proxmox/latest/docs/guides/cloud-image
-resource "proxmox_vm_qemu" "cookies-and-stream" {
+resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
   name        = "cookies-and-stream"
   description = "Debian VM for TV connection"
   node_name   = "hive"
   tags        = ["terraform", "debian"]
-  # clone existing VM
-  # clone {
-  #   vm_id = 900
-  #   full  = true
-  # }
   agent {
-    # TODO: Set to true once we have qemu-guest-agent installed in cloudinit-template
-    enabled = false
+    # qemu-guest-agent is installed via cloudinit-template
+    enabled = true
   }
   cpu {
     cores = 2
@@ -27,16 +22,6 @@ resource "proxmox_vm_qemu" "cookies-and-stream" {
   network_device {
     bridge = "vmbr0"
   }
-  # vga {
-  #   type = "std"
-  # }
-  # create a new scsi disk
-  # disk {
-  #   interface    = "scsi0"
-  #   size         = "100G"
-  #   file_format  = "raw"
-  #   datastore_id = "local-lvm"
-  # }
   disk {
     datastore_id = "local-lvm"
     import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
@@ -56,11 +41,16 @@ resource "proxmox_vm_qemu" "cookies-and-stream" {
         address = "dhcp"
       }
     }
-    user_account {
-      keys     = [var.ssh_public_key]
-      username = "chris"
-      password = var.vm_password
-    }
+    user_data_file_id = proxmox_virtual_environment_file.cloudinit_user_data.id
+  }
+}
+
+resource "proxmox_virtual_environment_file" "cloudinit_user_data" {
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = "hive"
+  source_file {
+    path = "../cloud-init/cookies-and-stream/user-data.yml"
   }
 }
 
