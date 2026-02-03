@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -35,24 +37,37 @@ func main() {
 	cmd_err := cmd.Run()
 	if cmd_err != nil {
 		log.Fatalf("Could not find mkpasswd command! %v", cmd_err)
+		return
 	}
-	user := User{Passwd: outb.String(), SSH_authorized_key: string(ssh_key)}
-	t1 := template.New("t1")
+	user := User{Passwd: strings.TrimSpace(outb.String()), SSH_authorized_key: strings.TrimSpace(string(ssh_key))}
+	// Create output file name from input file name
+	out_base_name, found := strings.CutSuffix(filepath.Base(os.Args[1]), ".gotmpl")
+	if !found {
+		log.Fatalf("Input file name must end in .gotmpl! %v", os.Args[1])
+		return
+	}
+	out_name := filepath.Join(filepath.Dir(os.Args[1]), out_base_name)
+	user_data_template := template.New("user-data")
 	raw, err := os.ReadFile(os.Args[1])
 	if err != nil {
 		log.Fatalf("Could not read input %v", err)
 		return
 	}
 	str := string(raw)
-	println(str)
-	t1, parse_err := t1.Parse(str)
+	user_data_template, parse_err := user_data_template.Parse(str)
 	if parse_err != nil {
 		log.Fatalf("Could not parse template! %v", parse_err)
 		return
 	}
-	exec_err := t1.Execute(os.Stdout, user)
+	fd, create_err := os.Create(out_name)
+	if create_err != nil {
+		log.Fatalf("Could not create output file! %v", create_err)
+		return
+	}
+	writer := bufio.NewWriter(fd)
+	exec_err := user_data_template.Execute(writer, user)
+	writer.Flush()
 	if exec_err != nil {
 		log.Fatalf("Could not execute template! %v", exec_err)
 	}
-	println("Foo")
 }
