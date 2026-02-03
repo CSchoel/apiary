@@ -3,6 +3,8 @@
     - hive-proxmox
   vars:
     user_data_file: string
+  vars_files:
+    - ../vars/credentials.yml
   tasks:
     - name: Install cloud-init
       ansible.builtin.package:
@@ -12,7 +14,6 @@
       ansible.builtin.copy:
         src: "{{ user_data_file }}"
         dest: /var/lib/vz/snippets/
-        state: present
         mode: "0644"
       register: copy_file
     - name: Check validity
@@ -23,3 +24,7 @@
           - -c
           - "{{ copy_file.dest }}"
           - --annotate
+      register: cloud_init_check
+    - name: Print result of previous command
+      ansible.builtin.debug:
+        msg: "{{cloud_init_check.stdout}}"
