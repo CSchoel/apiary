@@ -1,0 +1,11 @@
+# must be used with inventory_root.yml
+- name: Allow to ssh into the root account
+  hosts:
+    - hive-proxmox
+  vars_files:
+    - ../vars/credentials.yml
+  tasks:
+    - name: Allow current user to SSH into root
+      ansible.builtin.authorized_key:
+        user: root
+        key: "{{ lookup('file', '/home/kylar/.ssh/id_rsa.pub') }}"

@@ -1,6 +1,9 @@
+# Terraform
 .terraform
 credentials.auto.tfvars
 credentials.yml
+*.tfstate
+*.tfstate.backup
 
 # instantiated cloudinit user data with actual passwords
 user-data.yml

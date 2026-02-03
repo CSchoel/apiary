@@ -49,6 +49,7 @@ resource "proxmox_virtual_environment_file" "cloudinit_user_data" {
   content_type = "snippets"
   datastore_id = "local"
   node_name    = "hive"
+  # TODO: inline file content with source_raw instead
   source_file {
     path = "../cloud-init/cookies-and-stream/user-data.yml"
   }
