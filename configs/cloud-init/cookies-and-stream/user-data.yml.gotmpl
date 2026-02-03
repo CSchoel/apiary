@@ -4,15 +4,9 @@ user:
   passwd: "{{.Passwd}}"
   ssh_authorized_keys: ["{{.SSH_authorized_key}}"]
   sudo: "ALL=(ALL) ALL"
-# password: test
-chpasswd:
-  expire: true
 keyboard:
   layout: de
 locale: en_US
-# hostname: cookies-and-stream
-# create_hostname_file: true
-# fqdn: cookies-and-stream.local
 package_update: true # apt update
 packages:
   - qemu-guest-agent
