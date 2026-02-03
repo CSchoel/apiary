@@ -1,0 +1,25 @@
+- name: Check cloud-init file on localhost by uploading it to proxmox
+  hosts:
+    - hive-proxmox
+  vars:
+    user_data_file: string
+  tasks:
+    - name: Install cloud-init
+      ansible.builtin.package:
+        name: cloud-init
+        state: present
+    - name: Transfer user data file
+      ansible.builtin.copy:
+        src: "{{ user_data_file }}"
+        dest: /var/lib/vz/snippets/
+        state: present
+        mode: "0644"
+      register: copy_file
+    - name: Check validity
+      ansible.builtin.command:
+        argv:
+          - cloud-init
+          - schema
+          - -c
+          - "{{ copy_file.dest }}"
+          - --annotate
