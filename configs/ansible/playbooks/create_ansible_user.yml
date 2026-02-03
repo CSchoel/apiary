@@ -2,6 +2,8 @@
 - name: Create ansible user that can be accessed via SSH
   hosts:
     - hive-proxmox
+  vars_files:
+    - ../vars/credentials.yml
   tasks:
     - name: Create ansible user
       ansible.builtin.user:
