@@ -1,3 +1,9 @@
 .terraform
 credentials.auto.tfvars
 credentials.yml
+
+# instantiated cloudinit user data with actual passwords
+user-data.yml
+user-data.yaml
+user_data.yml
+user_data.yaml

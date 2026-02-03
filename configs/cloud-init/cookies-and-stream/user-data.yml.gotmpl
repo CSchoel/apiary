@@ -1,0 +1,33 @@
+#cloud-config
+user:
+  name: chris
+  passwd: "{{.Passwd}}"
+  ssh_authorized_keys: ["{{.SSH_authorized_key}}"]
+  sudo: "ALL=(ALL) ALL"
+# password: test
+chpasswd:
+  expire: true
+keyboard:
+  layout: de
+locale: en_US
+# hostname: cookies-and-stream
+# create_hostname_file: true
+# fqdn: cookies-and-stream.local
+package_update: true # apt update
+packages:
+  - qemu-guest-agent
+  - task-gnome-desktop
+  - firefox-esr # extended support release, recommended for debian stable
+package_reboot_if_required: true
+runcmd: # sideload ublock-origin addon for firefox (needs manual confirmation on first start)
+  - [
+      wget,
+      https://addons.mozilla.org/firefox/downloads/file/4675310/ublock_origin-latest.xpi,
+    ]
+  - [
+      mv,
+      ublock_origin-latest.xpi,
+      "/home/christ/.mozilla/firefox/*.default/extensions/{656875b9-0989-46a6-bfac-29524ba56450}.xpi",
+    ]
+# TODO:
+# - copy prefs.json for firefox
