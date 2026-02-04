@@ -36,10 +36,22 @@ resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
   }
 
   hostpci {
-    device = "hostpci0"
-    # id     = "0000:00:02"
+    device  = "hostpci0"
     mapping = "gpu"
     xvga    = true
+  }
+
+  hostpci {
+    device  = "hostpci1"
+    mapping = "audio"
+  }
+
+  usb {
+    mapping = "front_usb_1"
+  }
+
+  usb {
+    mapping = "front_usb_2"
   }
 
   initialization {
@@ -66,6 +78,50 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
     },
   ]
   mediated_devices = false
+}
+
+resource "proxmox_virtual_environment_hardware_mapping_pci" "audio" {
+  comment = "Maps the HD audio controller"
+  name    = "audio"
+  map = [
+    {
+      comment      = "Get this info with `pvesh get /nodes/hive/hardware/pci --pci-class-blacklist \"\"`"
+      id           = "8086:54c8" # vendor:device
+      iommu_group  = 10
+      node         = "hive"
+      path         = "0000:00:1f.3" # id
+      subsystem_id = "8086:7270"    # subsystem_vendor:subsystem_device
+    },
+  ]
+  mediated_devices = false
+}
+
+resource "proxmox_virtual_environment_hardware_mapping_usb" "front_usb_1" {
+  comment = "Maps the first front USB port (keyboard)"
+  name    = "front_usb_1"
+  # The actual map of devices.
+  map = [
+    {
+      comment = "Find this information with `lsusb -tv`"
+      id      = "046a:0023" # this refers to the device connected to the USB-port
+      node    = "hive"
+      path    = "3-1" # this specifies the port
+    },
+  ]
+}
+
+resource "proxmox_virtual_environment_hardware_mapping_usb" "front_usb_2" {
+  comment = "Maps the first front USB port (mouse)"
+  name    = "front_usb_2"
+  # The actual map of devices.
+  map = [
+    {
+      comment = "Find this information with `lsusb -tv`"
+      id      = "046d:c051" # this refers to the device connected to the USB-port
+      node    = "hive"
+      path    = "3-2" # this specifies the port
+    },
+  ]
 }
 
 resource "proxmox_virtual_environment_file" "cloudinit_user_data" {
