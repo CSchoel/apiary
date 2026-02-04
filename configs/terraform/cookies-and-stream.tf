@@ -35,6 +35,12 @@ resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
     type = "l26"
   }
 
+  hostpci {
+    device = "hostpci0"
+    id = "0000:00:02"
+    xvga= true
+  }
+
   initialization {
     ip_config {
       ipv4 {
