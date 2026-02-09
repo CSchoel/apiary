@@ -17,7 +17,7 @@ resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
     type  = "host"
   }
   memory {
-    dedicated = 4096
+    dedicated = 8192
   }
   network_device {
     bridge = "vmbr0"
@@ -52,6 +52,10 @@ resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
 
   usb {
     mapping = "front_usb_2"
+  }
+
+  usb {
+    mapping = "bluetooth"
   }
 
   initialization {
@@ -94,6 +98,20 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "audio" {
     },
   ]
   mediated_devices = false
+}
+
+resource "proxmox_virtual_environment_hardware_mapping_usb" "bluetooth" {
+  comment = "Maps the bluetooth device"
+  name    = "bluetooth"
+  # The actual map of devices.
+  map = [
+    {
+      comment = "Find this information with `lsusb -tv`"
+      id      = "8087:0026" # this refers to the device connected to the USB-port
+      node    = "hive"
+      path    = "3-10" # this specifies the port
+    },
+  ]
 }
 
 resource "proxmox_virtual_environment_hardware_mapping_usb" "front_usb_1" {
