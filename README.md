@@ -53,3 +53,9 @@ Currently I have the following workloads planned:
 * Run `go run configs/cloud-init/cookies-and-stream/instantiate_templates.go configs/cloud-init/cookies-and-stream/user-data.yml.gotmpl` to provide a password to the cloud-init user data file.
   * 🚧 TODO: This will be replaced by putting the cloud-init config directly into the Terraform config and using tfvars.
 * Run `terraform apply`. This should already set up all VMs on Proxmox, including the iGPU passthrough.
+* Copy `bottom-board:/etc/rancher/k3s/k3s.yaml` to `~/.kube/config` on your development machine and install `kubectl`.
+  * If you have a `k3s` install on your development machine that includes `kubectl`, you also need to add `export KUBECONFIG="${HOME}/.kube/config"` to your `~/.bashrc`. The `kubectl` installed by `k3s` ignores configs in `~/.kube/config` by default.
+
+## Kubernetes cluster
+
+My Kubernetes cluster is currently mostly managed via Helm, using configurations from the [brood chamber repo](https://github.com/CSchoel/brood-chamber).
