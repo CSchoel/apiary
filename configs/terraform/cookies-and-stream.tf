@@ -46,12 +46,9 @@ resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
     mapping = "audio"
   }
 
-  usb {
-    mapping = "front_usb_1"
-  }
-
-  usb {
-    mapping = "front_usb_2"
+  hostpci {
+    device  = "hostpci2"
+    mapping = "usb"
   }
 
   usb {
@@ -100,6 +97,22 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "audio" {
   mediated_devices = false
 }
 
+resource "proxmox_virtual_environment_hardware_mapping_pci" "usb" {
+  comment = "Maps the usb controller"
+  name    = "usb"
+  map = [
+    {
+      comment      = "Get this info with `pvesh get /nodes/hive/hardware/pci --pci-class-blacklist \"\"`"
+      id           = "8086:54ed" # vendor:device
+      iommu_group  = 3
+      node         = "hive"
+      path         = "0000:00:14.0" # id
+      subsystem_id = "8086:7270"    # subsystem_vendor:subsystem_device
+    },
+  ]
+  mediated_devices = false
+}
+
 resource "proxmox_virtual_environment_hardware_mapping_usb" "bluetooth" {
   comment = "Maps the bluetooth device"
   name    = "bluetooth"
@@ -110,34 +123,6 @@ resource "proxmox_virtual_environment_hardware_mapping_usb" "bluetooth" {
       id      = "8087:0026" # this refers to the device connected to the USB-port
       node    = "hive"
       path    = "3-10" # this specifies the port
-    },
-  ]
-}
-
-resource "proxmox_virtual_environment_hardware_mapping_usb" "front_usb_1" {
-  comment = "Maps the first front USB port (keyboard)"
-  name    = "front_usb_1"
-  # The actual map of devices.
-  map = [
-    {
-      comment = "Find this information with `lsusb -tv`"
-      id      = "046a:0023" # this refers to the device connected to the USB-port
-      node    = "hive"
-      path    = "3-1" # this specifies the port
-    },
-  ]
-}
-
-resource "proxmox_virtual_environment_hardware_mapping_usb" "front_usb_2" {
-  comment = "Maps the first front USB port (mouse)"
-  name    = "front_usb_2"
-  # The actual map of devices.
-  map = [
-    {
-      comment = "Find this information with `lsusb -tv`"
-      id      = "046d:c051" # this refers to the device connected to the USB-port
-      node    = "hive"
-      path    = "3-2" # this specifies the port
     },
   ]
 }
