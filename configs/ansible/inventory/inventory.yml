@@ -3,3 +3,6 @@ hive:
     hive-proxmox:
       ansible_user: ansible
       ansible_host: 192.168.178.66
+    hive02-proxmox:
+      ansible_user: ansible
+      ansible_host: 192.168.178.67
