@@ -1,0 +1,69 @@
+- name: Create terraform user in Proxmox
+  hosts:
+    - hive-proxmox
+    - hive02-proxmox
+  vars_files:
+    - ../vars/credentials.yml
+  tasks:
+    - name: Create the terraform user
+      community.proxmox.proxmox_user:
+        api_user: root@pam
+        api_password: {{ ansible_password }}
+        api_host: hive02
+        userid: terraform@pve
+    - name: Check if role exists
+      ansible.builtin.shell:
+        cmd: pveum role list --noborder | grep Terraform
+        register: find_terraform_role
+      ignore_errors: true
+    - name: Create role
+      # TODO: This can probably be replaced by community.proxmox.proxmox_role
+      #       in the future.
+      #       See: https://github.com/ansible-collections/community.proxmox/pull/262
+      ansible.builtin.command:
+        argv:
+          - pveum
+          - role
+          - add
+          - Terraform
+          - -privs
+          - >-
+            Realm.AllocateUser, VM.PowerMgmt, VM.GuestAgent.Unrestricted,
+            Sys.Console, Sys.Audit, Sys.AccessNetwork, VM.Config.Cloudinit,
+            VM.Replicate, Pool.Allocate, SDN.Audit, Realm.Allocate, SDN.Use,
+            Mapping.Modify, VM.Config.Memory, VM.GuestAgent.FileSystemMgmt,
+            VM.Allocate, SDN.Allocate, VM.Console, VM.Clone, VM.Backup,
+            Datastore.AllocateTemplate, VM.Snapshot, VM.Config.Network,
+            Sys.Incoming, Sys.Modify, VM.Snapshot.Rollback, VM.Config.Disk,
+            Datastore.Allocate, VM.Config.CPU, VM.Config.CDROM, Group.Allocate,
+            Datastore.Audit, VM.Migrate, VM.GuestAgent.FileWrite, Mapping.Use,
+            Datastore.AllocateSpace, Sys.Syslog, VM.Config.Options, Pool.Audit,
+            User.Modify, VM.Config.HWType, VM.Audit, Sys.PowerMgmt,
+            VM.GuestAgent.Audit, Mapping.Audit, VM.GuestAgent.FileRead,
+            Permissions.Modify
+        when: find_terraform_role.rc != 0
+    - name: Set user role
+      community.proxmox.proxmox_access_acl:
+        api_user: root@pam
+        api_password: {{ ansible_password }}
+        api_host: hive02
+        state: present
+        path: /
+        type: user
+        roleid: Terraform
+        ugid: terraform@pve
+    - name: Check if token for terraform user exists
+      ansible.builtin.shell:
+        cmd: pveum user token list terraform@pve --noborder | grep terraform
+        register: find_terraform_token
+      ignore_errors: true
+    - name: Create token for terraform proxmox user
+      ansible.builtin.command:
+        argv:
+          - pveum
+          - user
+          - token
+          - add
+          - terraform@pve
+          - terraform-token
+      when: find_terraform_token.rc != 0
