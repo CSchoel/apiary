@@ -32,8 +32,18 @@ Currently I have the following workloads planned:
 ## Setup instructions
 
 * Download the latest iso for Proxmox, create a bootable USB and install it on `hive`.
-  * Default settings are fine.
+  * Ensure the machine has ethernet access to router before booting.
+  * Use the following settings:
+    * Management interface: nic0 (needs to be ethernet, not wifi)
+    * Hostname (FQDN): `hive.local`
+    * IP Address (CIDR): `192.168.178.67/24`
+      * This may be pre-filled.
+      * It's important to use a valid IP in the subnet of your router here. So if you are unsure, you can just look up the IPv4 address that your router assigns to the machine.
+      * The last part `/24` defines the subnet mask. It declares that the first 24 bits are fixed, so the last 8 ones will make up the subnet that the cluster operates in.
+    * Gateway: `192.168.178.1` (ip address of your router)
+    * DNS Server: `192.168.178.1` (ip address of your router, if it provides a DNS server)
   * Note down root password.
+* Access your router configuration and ensure that `hive` always gets assigned the same IP.
 * Store Ansible vault secret in GNOME keyring with `configs/ansible/scripts/store_vault_secret_in_keyring.sh`.
 * Set up a terraform user and create an API token with `configs/ansible/scripts/create_terraform_proxmox_user.sh`.
   * 🚧 TODO: This will be turned into an Ansible playbook later.
