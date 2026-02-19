@@ -79,7 +79,7 @@
     - name: Print the token we just created so we can save it
       ansible.builtin.debug:
           msg: |
-            Token for {{ host }}:
+            Token for {{ inventory_hostname }}:
             {{ create_token.stdout }}
 
             WARNING: You will not be able to read this token again. Make sure to save it.
