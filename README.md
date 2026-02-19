@@ -45,7 +45,7 @@ Currently I have the following workloads planned:
   * Note down root password.
 * Access your router configuration and ensure that `hive` always gets assigned the same IP.
 * Store Ansible vault secret in GNOME keyring with `configs/ansible/scripts/store_vault_secret_in_keyring.sh`.
-* Store the following credentials in a file `❗❗` using `configs/ansible/scripts/encrypt_string.sh`.
+* Store the following credentials in a file `configs/ansible/vars/credentials.yml` using `configs/ansible/scripts/encrypt_string.sh`.
   * `proxmox_ansible_password`: The root password of the Proxmox instance on `hive`.
   * `proxmox_api_token_secret`: Just add a dummy value here for now.
 * Run the following Ansible configs:
