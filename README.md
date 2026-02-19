@@ -45,12 +45,13 @@ Currently I have the following workloads planned:
   * Note down root password.
 * Access your router configuration and ensure that `hive` always gets assigned the same IP.
 * Store Ansible vault secret in GNOME keyring with `configs/ansible/scripts/store_vault_secret_in_keyring.sh`.
-* Set up a terraform user and create an API token with `configs/ansible/scripts/create_terraform_proxmox_user.sh`.
-  * 🚧 TODO: This will be turned into an Ansible playbook later.
-* Store the following two credentials in a file `configs/ansible/vars/credentials.yml` using `configs/ansible/scripts/encrypt_string.sh`.
-  * `proxmox_api_token_secret`: The secret of the API token you generated in the last command.
+* Store the following credentials in a file `❗❗` using `configs/ansible/scripts/encrypt_string.sh`.
   * `proxmox_ansible_password`: The root password of the Proxmox instance on `hive`.
-* Run `configs/ansible/scripts/ansroot.sh configs/ansible/playbooks/allow_ssh_as_root.yml` to allow SSH-ing into the Proxmox root user with your SSH key.
+  * `proxmox_api_token_secret`: Just add a dummy value here for now.
+* Run the following Ansible configs:
+  * `configs/ansible/scripts/ansroot.sh configs/ansible/playbooks/create_ansible_user.yml`
+  * `configs/ansible/scripts/ansuser.sh configs/ansible/scripts/create_terraform_proxmox_user.sh`
+    * ❗ Save the token that is displayed at the end of this playbook as `proxmox_api_token_secret` in `configs/ansible/vars/credentials.yml` as you will not be able to view it again.
 * [Install terraform](https://developer.hashicorp.com/terraform/install) on your development machine.
 * Add the following variables to `configs/terraform/credentials.auto.tfvars`:
   * `proxmox_endpoint` the endpoint where to find your proxmox server.
