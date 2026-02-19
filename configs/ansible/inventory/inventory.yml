@@ -3,6 +3,8 @@ hive:
     hive-proxmox:
       ansible_user: ansible
       ansible_host: 192.168.178.66
+      ansible_port: "{{ ssh_port }}"
     hive02-proxmox:
       ansible_user: ansible
       ansible_host: 192.168.178.67
+      ansible_port: "{{ ssh_port }}"
