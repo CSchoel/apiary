@@ -13,7 +13,7 @@
       community.proxmox.proxmox_user:
         api_user: root@pam
         api_password: "{{ proxmox_root_password }}"
-        api_host: hive02
+        api_host: "{{ proxmox_host }}"
         userid: terraform@pve
     - name: Check if role exists
       ansible.builtin.shell:
@@ -52,7 +52,7 @@
       community.proxmox.proxmox_access_acl:
         api_user: root@pam
         api_password: "{{ proxmox_root_password }}"
-        api_host: hive02
+        api_host: "{{ proxmox_host }}"
         state: present
         path: /
         type: user

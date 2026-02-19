@@ -25,6 +25,7 @@
           - "{{ copy_file.dest }}"
           - --annotate
       register: cloud_init_check
+      changed_when: false
     - name: Print result of previous command
       ansible.builtin.debug:
         msg: "{{cloud_init_check.stdout}}"
