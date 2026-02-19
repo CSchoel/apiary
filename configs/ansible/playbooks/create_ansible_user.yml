@@ -36,3 +36,9 @@
         src: ../templates/10-allow-local-connection.conf.jinja
         dest: /etc/ssh/sshd_config.d/10-allow-local-connection.conf
         validate: sshd -tf %s
+      notify: Restart sshd
+  handlers:
+    - name: Restart sshd
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
