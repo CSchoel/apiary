@@ -12,7 +12,7 @@
     - name: Create the terraform user
       community.proxmox.proxmox_user:
         api_user: root@pam
-        api_password: "{{ ansible_password }}"
+        api_password: "{{ proxmox_root_password }}"
         api_host: hive02
         userid: terraform@pve
     - name: Check if role exists
@@ -20,6 +20,7 @@
         cmd: pveum role list --noborder | grep Terraform
       register: find_terraform_role
       ignore_errors: true
+      changed_when: false
     - name: Create role
       # TODO: This can probably be replaced by community.proxmox.proxmox_role
       #       in the future.
@@ -46,10 +47,11 @@
             VM.GuestAgent.Audit, Mapping.Audit, VM.GuestAgent.FileRead,
             Permissions.Modify
       when: find_terraform_role.rc != 0
+      changed_when: find_terraform_role.rc != 0
     - name: Set user role
       community.proxmox.proxmox_access_acl:
         api_user: root@pam
-        api_password: "{{ ansible_password }}"
+        api_password: "{{ proxmox_root_password }}"
         api_host: hive02
         state: present
         path: /
@@ -61,6 +63,7 @@
         cmd: pveum user token list terraform@pve --noborder | grep terraform
       register: find_terraform_token
       ignore_errors: true
+      changed_when: false
     - name: Create token for terraform proxmox user
       ansible.builtin.command:
         argv:
@@ -71,3 +74,4 @@
           - terraform@pve
           - terraform-token
       when: find_terraform_token.rc != 0
+      changed_when: find_terraform_token.rc != 0
