@@ -1,0 +1,9 @@
+PasswordAuthentication no
+PubkeyAuthentication no
+PermitRootLogin no
+ListenAddress {{ ansible_host }}
+Port {{ ssh_port }}
+
+Match Address 192.168.178.*
+	PubkeyAuthentication yes
+	AllowUsers ansible

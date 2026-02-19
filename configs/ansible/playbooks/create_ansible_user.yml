@@ -1,7 +1,9 @@
 # must be used with inventory_root.yml
+# TODO: https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_privilege_escalation.html
 - name: Create ansible user that can be accessed via SSH
   hosts:
     - hive-proxmox
+    - hive02-proxmox
   vars_files:
     - ../vars/credentials.yml
   tasks:
@@ -9,7 +11,7 @@
       ansible.builtin.user:
         name: ansible
     - name: Allow current user to SSH into ansible user
-      ansible.builtin.authorized_key:
+      ansible.posix.authorized_key:
         user: ansible
         key: "{{ lookup('file', '/home/kylar/.ssh/id_rsa.pub') }}"
     - name: Install sudo
@@ -29,3 +31,8 @@
         # -f provides alternative sudoers file name
         # %s references the temporary file created by ansible
         validate: /usr/sbin/visudo -cf %s
+    - name: Disallow any other connections
+      ansible.builtin.template:
+        src: ../templates/10-allow-local-connection.conf.jinja
+        dest: /etc/ssh/sshd_config.d/10-allow-local-connection.conf
+        validate: sshd -tf %s

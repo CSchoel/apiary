@@ -2,6 +2,7 @@
 - name: Allow to ssh into the root account
   hosts:
     - hive-proxmox
+    - hive02-proxmox
   vars_files:
     - ../vars/credentials.yml
   tasks:
