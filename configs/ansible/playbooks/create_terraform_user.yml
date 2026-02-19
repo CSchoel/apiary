@@ -75,3 +75,12 @@
           - terraform-token
       when: find_terraform_token.rc != 0
       changed_when: find_terraform_token.rc != 0
+      register: create_token
+    - name: Print the token we just created so we can save it
+      ansible.builtin.debug:
+          msg: |
+            Token for {{ host }}:
+            {{ create_token.stdout }}
+
+            WARNING: You will not be able to read this token again. Make sure to save it.
+      when: find_terraform_token.rc != 0
