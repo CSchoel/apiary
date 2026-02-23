@@ -60,9 +60,8 @@
         ugid: terraform@pve
     - name: Check if token for terraform user exists
       ansible.builtin.shell:
-        cmd: pveum user token list terraform@pve --noborder | grep terraform
+        cmd: pveum user token list terraform@pve --noborder | grep terraform || echo "missing"
       register: find_terraform_token
-      ignore_errors: true
       changed_when: false
     - name: Check if snippets are enabled
       ansible.builtin.shell:
@@ -77,7 +76,7 @@
           - local
           - --content
           - snippets,iso,vztmpl,backup,import
-      changed_when: find_snippet_setting.stdout != "missing\n"
+      changed_when: find_snippet_setting.stdout == "missing"
     - name: Create token for terraform proxmox user
       ansible.builtin.command:
         argv:
@@ -87,8 +86,9 @@
           - add
           - terraform@pve
           - terraform-token
-      when: find_terraform_token.rc != 0
-      changed_when: find_terraform_token.rc != 0
+          - --privsep=0
+      when: find_terraform_token.stdout == "missing"
+      changed_when: find_terraform_token.stdout == "missing"
       register: create_token
     - name: Print the token we just created so we can save it
       ansible.builtin.debug:
@@ -97,4 +97,4 @@
             {{ create_token.stdout }}
 
             WARNING: You will not be able to read this token again. Make sure to save it.
-      when: find_terraform_token.rc != 0
+      when: find_terraform_token.stdout == "missing"
