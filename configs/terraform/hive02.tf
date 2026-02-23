@@ -53,7 +53,7 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
   provider    = proxmox.hive02
   name        = "h02-frame01"
   description = "A frame in the beehive - a Kubernetes worker node"
-  node_name   = "hive"
+  node_name   = "hive02"
   tags        = ["terraform", "debian", "kubernetes"]
   agent {
     # qemu-guest-agent is installed via cloudinit-template
