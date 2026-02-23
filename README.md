@@ -13,14 +13,15 @@ The setup is specific to my hardware, so it might not be all that interesting to
 
 I'm just using what I have available, so we have a bit of a hodgepodge situation regarding hardware:
 
-* `hive`: Beelink Mini S12 Pro.
+* `hive` and `hive02`: Beelink Mini S12 Pro.
+  * 🚧 `hive` will be renamed to `hive01` for consistency.
 * `mellifera`: An old Raspberry Pi 3 B.
 
 ## VMs
 
-Since I want to use `hive` for watching YouTube videos on my TV, I want it to be isolated from my Kubernetes cluster.
-Therefore, I'm using Proxmox to provide a VM with iGPU passthrough for powering the TV and another one to run workloads on the Kubernetes cluster.
-`mellifera` is super small, so I'm just using that bare metal.
+Since I want to use `hive01` for watching YouTube videos on my TV, I want it to be isolated from my Kubernetes cluster.
+Therefore, I'm using Proxmox to provide a VM with iGPU passthrough for powering the TV on `hive01` and put the Kubernetes cluster on `hive02`.
+`mellifera` is currently unused, but could become a second physical worker node for the cluster.
 
 ## Workloads
 
