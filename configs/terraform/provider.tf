@@ -26,6 +26,10 @@ variable "hive02_api_token" {
   sensitive = true
 }
 
+variable "hive_ssh_port" {
+  type = string
+}
+
 provider "proxmox" {
   alias     = "hive01"
   endpoint  = var.hive01_endpoint
@@ -34,6 +38,11 @@ provider "proxmox" {
   ssh {
     agent    = true # required to upload snippets
     username = "ansible"
+    node {
+      name    = "hive"
+      address = "hive"
+      port    = var.hive_ssh_port
+    }
   }
 }
 
@@ -45,5 +54,10 @@ provider "proxmox" {
   ssh {
     agent    = true # required to upload snippets
     username = "ansible"
+    node {
+      name    = "hive02"
+      address = "hive02"
+      port    = var.hive_ssh_port
+    }
   }
 }
