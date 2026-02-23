@@ -59,7 +59,6 @@ Currently I have the following workloads planned:
 * Run `terraform init` in `configs/terraform`
 * Follow the instructions in [notes/igpu_passthrough.md](notes/igpu_passthrough.md) to prepare iGPU passthrough on the Proxmox host side.
   * 🚧 TODO: This will be turned into an Ansible playbook later.
-* Follow the instructions in [notes/enable_snippets.md](notes/enable_snippets.md) to allow uploading snippets to Proxmox.
 * [Install go](https://go.dev/doc/install) on your development machine.
 * Run `go run configs/cloud-init/cookies-and-stream/instantiate_templates.go configs/cloud-init/cookies-and-stream/user-data.yml.gotmpl` to provide a password to the cloud-init user data file.
   * 🚧 TODO: This will be replaced by putting the cloud-init config directly into the Terraform config and using tfvars.

@@ -64,6 +64,20 @@
       register: find_terraform_token
       ignore_errors: true
       changed_when: false
+    - name: Check if snippets are enabled
+      ansible.builtin.shell:
+        cmd: grep snippet /etc/pve/storage.cfg || echo "missing"
+      changed_when: false
+      register: find_snippet_setting
+    - name: Allow uploading snippets
+      ansible.builtin.command:
+        argv:
+          - pvesm
+          - set
+          - local
+          - --content
+          - snippets,iso,vztmpl,backup,import
+      changed_when: find_snippet_setting.stdout != "missing\n"
     - name: Create token for terraform proxmox user
       ansible.builtin.command:
         argv:
@@ -78,7 +92,7 @@
       register: create_token
     - name: Print the token we just created so we can save it
       ansible.builtin.debug:
-          msg: |
+        msg: |
             Token for {{ inventory_hostname }}:
             {{ create_token.stdout }}
 
