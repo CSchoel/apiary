@@ -40,6 +40,7 @@
         src: ../templates/10-allow-local-connection.conf.jinja
         dest: /etc/ssh/sshd_config.d/10-allow-local-connection.conf
         validate: sshd -tf %s
+        mode: 644
       notify: Restart sshd
       become: true
   handlers:
