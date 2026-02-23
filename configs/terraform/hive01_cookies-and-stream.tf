@@ -4,6 +4,7 @@
 # - https://www.youtube.com/watch?v=sJlnXwZDdso
 # - https://registry.terraform.io/providers/bpg/proxmox/latest/docs/guides/cloud-image
 resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
+  provider    = proxmox.hive01
   name        = "cookies-and-stream"
   description = "Debian VM for TV connection"
   node_name   = "hive"
@@ -66,8 +67,9 @@ resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
 }
 
 resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
-  comment = "Maps the N100s internal GPU"
-  name    = "gpu"
+  provider = proxmox.hive01
+  comment  = "Maps the N100s internal GPU"
+  name     = "gpu"
   map = [
     {
       comment      = "Get this info with `pvesh get /nodes/hive/hardware/pci --pci-class-blacklist \"\"`"
@@ -82,8 +84,9 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
 }
 
 resource "proxmox_virtual_environment_hardware_mapping_pci" "audio" {
-  comment = "Maps the HD audio controller"
-  name    = "audio"
+  provider = proxmox.hive01
+  comment  = "Maps the HD audio controller"
+  name     = "audio"
   map = [
     {
       comment      = "Get this info with `pvesh get /nodes/hive/hardware/pci --pci-class-blacklist \"\"`"
@@ -98,8 +101,9 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "audio" {
 }
 
 resource "proxmox_virtual_environment_hardware_mapping_pci" "usb" {
-  comment = "Maps the usb controller"
-  name    = "usb"
+  provider = proxmox.hive01
+  comment  = "Maps the usb controller"
+  name     = "usb"
   map = [
     {
       comment      = "Get this info with `pvesh get /nodes/hive/hardware/pci --pci-class-blacklist \"\"`"
@@ -114,8 +118,9 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "usb" {
 }
 
 resource "proxmox_virtual_environment_hardware_mapping_usb" "bluetooth" {
-  comment = "Maps the bluetooth device"
-  name    = "bluetooth"
+  provider = proxmox.hive01
+  comment  = "Maps the bluetooth device"
+  name     = "bluetooth"
   # The actual map of devices.
   map = [
     {
@@ -128,6 +133,7 @@ resource "proxmox_virtual_environment_hardware_mapping_usb" "bluetooth" {
 }
 
 resource "proxmox_virtual_environment_file" "cloudinit_user_data" {
+  provider     = proxmox.hive01
   content_type = "snippets"
   datastore_id = "local"
   node_name    = "hive"
@@ -138,6 +144,7 @@ resource "proxmox_virtual_environment_file" "cloudinit_user_data" {
 }
 
 resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
+  provider     = proxmox.hive01
   content_type = "import"
   datastore_id = "local"
   node_name    = "hive"

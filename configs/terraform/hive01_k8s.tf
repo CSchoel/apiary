@@ -1,4 +1,5 @@
 resource "proxmox_virtual_environment_vm" "bottom-board" {
+  provider    = proxmox.hive01
   name        = "bottom-board"
   description = "The bottom board of the beehive - The Kubernetes master node"
   node_name   = "hive"
@@ -41,6 +42,7 @@ resource "proxmox_virtual_environment_vm" "bottom-board" {
 }
 
 resource "proxmox_virtual_environment_vm" "frame01" {
+  provider    = proxmox.hive01
   name        = "frame01"
   description = "A frame in the beehive - a Kubernetes worker node"
   node_name   = "hive"
@@ -100,6 +102,7 @@ variable "k3s_node_token" {
 }
 
 resource "proxmox_virtual_environment_file" "bottom_board_user_data" {
+  provider     = proxmox.hive01
   content_type = "snippets"
   datastore_id = "local"
   node_name    = "hive"
@@ -133,6 +136,7 @@ resource "proxmox_virtual_environment_file" "bottom_board_user_data" {
 }
 
 resource "proxmox_virtual_environment_file" "frame01_user_data" {
+  provider     = proxmox.hive01
   content_type = "snippets"
   datastore_id = "local"
   node_name    = "hive"
