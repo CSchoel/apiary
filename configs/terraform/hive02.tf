@@ -156,7 +156,7 @@ resource "proxmox_virtual_environment_file" "h02_frame01_user_data" {
     keyboard:
       layout: de
     users:
-      - name: beekeeper"
+      - name: beekeeper
         passwd: '${var.beekeeper_password}'
         lock_passwd: false
         ssh_authorized_keys: ['${var.beekeeper_ssh_pubkey}']
