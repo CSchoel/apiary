@@ -7,7 +7,7 @@ variable "AP_name" {
   type = string
 }
 
-variable "AP_password" {
+variable "AP_psk" {
   type      = string
   sensitive = true
 }
