@@ -1,0 +1,25 @@
+#cloud-config
+hostname: mh-frame01
+package_update: true # apt update
+packages:
+  - avahi-daemon
+package_reboot_if_required: true
+timezone: Europe/Berlin
+keyboard:
+  layout: "de"
+locale: en_US
+users:
+- name: beekeeper
+  groups: users,adm,dialout,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo
+  shell: /bin/bash
+  lock_passwd: false
+  passwd: "{{.beekeeper_password}}"
+  ssh_authorized_keys: ['{{.beekeeper_ssh_pubkey}}']
+  sudo: ALL=(ALL) NOPASSWD:ALL
+enable_ssh: true
+ssh_pwauth: false
+rpi:
+  interfaces:
+    serial: true
+runcmd: # install k3s
+    - "curl -sfL https://get.k3s.io | K3S_URL=https://h02-bottom-board:6443 K3S_TOKEN={{.k3s_node_token}} sh -"
