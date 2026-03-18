@@ -5,6 +5,7 @@ packages:
   - avahi-daemon
   - iptables
   - linux-modules-extra-raspi
+  - curl
 package_reboot_if_required: true
 timezone: Europe/Berlin
 keyboard:
@@ -23,7 +24,12 @@ ssh_pwauth: false
 rpi:
   interfaces:
     serial: true
-bootcmd: # enable kernel settings required for k3s
-    - "sed -i '1 s/$/ cgroup_memory=1 cgroup_enable=memory/' /boot/cmdline.txt"
-runcmd: # install k3s
-    - "curl -sfL https://get.k3s.io | K3S_URL=https://h02-bottom-board:6443 K3S_TOKEN={{.k3s_node_token}} K3S_DEBUG=true sh -"
+runcmd:
+  # enable kernel settings required for k3s
+  - "sed -i '1 s/$/ cgroup_memory=1 cgroup_enable=memory/' /boot/firmware/cmdline.txt"
+  # install k3s
+  - "curl -sfL https://get.k3s.io | K3S_URL=https://h02-bottom-board:6443 K3S_TOKEN={{.k3s_node_token}} K3S_DEBUG=true sh -"
+power_state:
+  delay: now
+  mode: reboot
+  condition: true
