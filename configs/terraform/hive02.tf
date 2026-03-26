@@ -33,7 +33,17 @@ resource "proxmox_virtual_environment_vm" "h02-bottom-board" {
     import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
-    size         = 150
+    size         = 150 # TODO: shrink to 100
+  }
+
+  # attached disks from data VM
+  disk {
+    datastore_id      = proxmox_virtual_environment_vm.h02-data.disk[0].datastore_id
+    path_in_datastore = proxmox_virtual_environment_vm.h02-data.disk[0].path_in_datastore
+    file_format       = proxmox_virtual_environment_vm.h02-data.disk[0].file_format
+    size              = proxmox_virtual_environment_vm.h02-data.disk[0].size
+    discard           = proxmox_virtual_environment_vm.h02-data.disk[0].discard
+    interface         = "scsi1"
   }
 
   operating_system {
@@ -76,7 +86,17 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
     import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
-    size         = 250
+    size         = 250 # TODO: shrink to 100
+  }
+
+  # attached disks from data VM
+  disk {
+    datastore_id      = proxmox_virtual_environment_vm.h02-data.disk[1].datastore_id
+    path_in_datastore = proxmox_virtual_environment_vm.h02-data.disk[1].path_in_datastore
+    file_format       = proxmox_virtual_environment_vm.h02-data.disk[1].file_format
+    size              = proxmox_virtual_environment_vm.h02-data.disk[1].size
+    discard           = proxmox_virtual_environment_vm.h02-data.disk[1].discard
+    interface         = "scsi1"
   }
 
   operating_system {
@@ -109,6 +129,33 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
 #   type      = string
 #   sensitive = true
 # }
+
+# This is just a dummy VM to hold the data disks that should persist
+# even after their VM was deleted.
+resource "proxmox_virtual_environment_vm" "h02-data" {
+  provider  = proxmox.hive02
+  node_name = "hive02"
+  started   = false
+  on_boot   = false
+
+  # Data disk for bottom-board
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "scsi0"
+    discard      = "on"
+    size         = 100
+    file_format  = "raw"
+  }
+
+  # Data disk for frame01
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "scsi1"
+    discard      = "on"
+    size         = 100
+    file_format  = "raw"
+  }
+}
 
 resource "proxmox_virtual_environment_storage_lvmthin" "h02_frame01_kube_data" {
   provider = proxmox.hive02
