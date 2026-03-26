@@ -4,6 +4,7 @@ resource "proxmox_virtual_environment_download_file" "h02_debian_cloud_image" {
   datastore_id = "local"
   node_name    = "hive02"
   url          = "https://cloud.debian.org/images/cloud/trixie/20260112-2355/debian-13-generic-amd64-20260112-2355.qcow2"
+  overwrite    = false # don't check if the image still exists in case it has already been downloaded
 }
 
 resource "proxmox_virtual_environment_vm" "h02-bottom-board" {
@@ -108,6 +109,17 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
 #   type      = string
 #   sensitive = true
 # }
+
+resource "proxmox_virtual_environment_storage_lvmthin" "h02_frame01_kube_data" {
+  provider = proxmox.hive02
+  id       = "h02-f01-lvmthin"
+  nodes    = ["h02-frame01"]
+
+  volume_group = "pve" # can be found with `vgs`
+  thin_pool    = "kube-data-h02-f01"
+
+  content = ["rootdir"]
+}
 
 resource "proxmox_virtual_environment_file" "h02_bottom_board_user_data" {
   provider     = proxmox.hive02
