@@ -3,58 +3,35 @@
 # - https://www.youtube.com/watch?v=8D2lN7MEavM
 # - https://www.youtube.com/watch?v=sJlnXwZDdso
 # - https://registry.terraform.io/providers/bpg/proxmox/latest/docs/guides/cloud-image
-resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
-  provider    = proxmox.hive01
-  name        = "cookies-and-stream"
-  description = "Debian VM for TV connection"
-  node_name   = "hive"
-  tags        = ["terraform", "debian"]
-  agent {
-    # qemu-guest-agent is installed via cloudinit-template
-    enabled = true
-  }
+# - https://blog.konpat.me/dev/2019/03/11/setting-up-lxc-for-intel-gpu-proxmox.html
+resource "proxmox_virtual_environment_container" "cookies-and-stream" {
+  provider     = proxmox.hive01
+  description  = "Debian VM for TV connection"
+  node_name    = "hive"
+  tags         = ["terraform", "debian"]
+  unprivileged = true
   cpu {
     cores = 2
-    type  = "host"
   }
   memory {
     dedicated = 8192
   }
-  network_device {
+  network_interface {
+    name   = "veth0"
     bridge = "vmbr0"
   }
   disk {
     datastore_id = "local-lvm"
-    import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
-    interface    = "scsi0"
-    # iothread     = true
-    discard = "on"
-    size    = 100
+    size         = 100
   }
-
   operating_system {
-    type = "l26"
+    template_file_id = proxmox_virtual_environment_download_file.debian_cloud_image.id
+    type             = "debian"
   }
 
-  hostpci {
-    device  = "hostpci0"
-    mapping = "gpu"
-    xvga    = true
-  }
-
-  hostpci {
-    device  = "hostpci1"
-    mapping = "audio"
-  }
-
-  hostpci {
-    device  = "hostpci2"
-    mapping = "usb"
-  }
-
-  usb {
-    mapping = "bluetooth"
-  }
+  # device_passthrough {
+  #   # TODO
+  # }
 
   initialization {
     ip_config {
@@ -62,96 +39,17 @@ resource "proxmox_virtual_environment_vm" "cookies-and-stream" {
         address = "dhcp"
       }
     }
-    user_data_file_id = proxmox_virtual_environment_file.cloudinit_user_data.id
-  }
-}
-
-resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
-  provider = proxmox.hive01
-  comment  = "Maps the N100s internal GPU"
-  name     = "gpu"
-  map = [
-    {
-      comment      = "Get this info with `pvesh get /nodes/hive/hardware/pci --pci-class-blacklist \"\"`"
-      id           = "8086:46d1" # vendor:device
-      iommu_group  = 0
-      node         = "hive"
-      path         = "0000:00:02.0" # id
-      subsystem_id = "8086:7270"    # subsystem_vendor:subsystem_device
-    },
-  ]
-  mediated_devices = false
-}
-
-resource "proxmox_virtual_environment_hardware_mapping_pci" "audio" {
-  provider = proxmox.hive01
-  comment  = "Maps the HD audio controller"
-  name     = "audio"
-  map = [
-    {
-      comment      = "Get this info with `pvesh get /nodes/hive/hardware/pci --pci-class-blacklist \"\"`"
-      id           = "8086:54c8" # vendor:device
-      iommu_group  = 10
-      node         = "hive"
-      path         = "0000:00:1f.3" # id
-      subsystem_id = "8086:7270"    # subsystem_vendor:subsystem_device
-    },
-  ]
-  mediated_devices = false
-}
-
-resource "proxmox_virtual_environment_hardware_mapping_pci" "usb" {
-  provider = proxmox.hive01
-  comment  = "Maps the usb controller"
-  name     = "usb"
-  map = [
-    {
-      comment      = "Get this info with `pvesh get /nodes/hive/hardware/pci --pci-class-blacklist \"\"`"
-      id           = "8086:54ed" # vendor:device
-      iommu_group  = 3
-      node         = "hive"
-      path         = "0000:00:14.0" # id
-      subsystem_id = "8086:7270"    # subsystem_vendor:subsystem_device
-    },
-  ]
-  mediated_devices = false
-}
-
-resource "proxmox_virtual_environment_hardware_mapping_usb" "bluetooth" {
-  provider = proxmox.hive01
-  comment  = "Maps the bluetooth device"
-  name     = "bluetooth"
-  # The actual map of devices.
-  map = [
-    {
-      comment = "Find this information with `lsusb -tv`"
-      id      = "8087:0026" # this refers to the device connected to the USB-port
-      node    = "hive"
-      path    = "3-10" # this specifies the port
-    },
-  ]
-}
-
-resource "proxmox_virtual_environment_file" "cloudinit_user_data" {
-  provider     = proxmox.hive01
-  content_type = "snippets"
-  datastore_id = "local"
-  node_name    = "hive"
-  # TODO: inline file content with source_raw instead
-  source_file {
-    path = "../cloud-init/cookies-and-stream/user-data.yml"
+    hostname = "cookies-and-stream"
+    user_account {
+      keys = [var.beekeeper_ssh_pubkey]
+    }
   }
 }
 
 resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
   provider     = proxmox.hive01
-  content_type = "import"
+  content_type = "vztmpl"
   datastore_id = "local"
   node_name    = "hive"
-  url          = "https://cloud.debian.org/images/cloud/trixie/20260112-2355/debian-13-generic-amd64-20260112-2355.qcow2"
-}
-
-output "vm_ip_address" {
-  description = "IP address of the created VM"
-  value       = proxmox_virtual_environment_vm.cookies-and-stream.ipv4_addresses
+  url          = "https://fra1lxdmirror01.do.letsbuildthe.cloud/images/debian/trixie/amd64/default/20260318_05:24/rootfs.tar.xz"
 }
