@@ -3,6 +3,7 @@
   hosts:
     - hive-proxmox
     - hive02-proxmox
+    - mh-frame01
   vars_files:
     - ../vars/credentials.yml
   tasks:

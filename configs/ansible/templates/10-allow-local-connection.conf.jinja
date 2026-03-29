@@ -1,3 +1,4 @@
+{% set extra_users = extra_users | default('') %}
 PasswordAuthentication no
 PubkeyAuthentication no
 PermitRootLogin no
@@ -6,4 +7,4 @@ Port {{ ssh_port }}
 
 Match Address 192.168.178.*
 	PubkeyAuthentication yes
-	AllowUsers ansible
+	AllowUsers ansible {{ extra_users }}

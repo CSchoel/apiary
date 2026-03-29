@@ -16,3 +16,9 @@ hive:
       proxmox_root_password: "{{ proxmox02_ansible_password }}"
       proxmox_token: "{{ proxmox_02_api_token_secret }}"
       proxmox_host: hive02
+    mh-frame01:
+      ansible_user: ansible
+      ansible_host: 192.168.178.58
+      ansible_port: "{{ ssh_port }}"
+      extra_users: beekeeper
+      ansible_become: true # become root by default

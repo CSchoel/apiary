@@ -12,3 +12,9 @@ hive:
       ansible_host: 192.168.178.67
       ansible_python_interpreter: /usr/bin/python3.13
       proxmox_host: hive02
+    mh-frame01:
+      ansible_user: beekeeper
+      ansible_password: "{{ beekeeper_password }}"
+      ansible_host: 192.168.178.58
+      ansible_python_interpreter: /usr/bin/python3.13
+      extra_users: beekeeper
