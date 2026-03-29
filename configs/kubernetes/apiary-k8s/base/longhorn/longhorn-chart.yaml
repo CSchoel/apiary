@@ -1,0 +1,83 @@
+# Reference: https://docs.k3s.io/add-ons/helm
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: longhorn
+  namespace: kube-system
+spec:
+  repo: https://charts.longhorn.io
+  chart: longhorn
+  targetNamespace: longhorn-system
+  version: 1.11.1
+  valuesContent: |-
+    # Default values for longhorn.
+    # Reference: https://deepwiki.com/longhorn/longhorn/3.2-helm-chart-configuration
+    service:
+      ui:
+        type: NodePort
+        nodePort: 300018
+      manager:
+        type: ClusterIP
+        nodePort: ""
+
+    persistence:
+      defaultClass: true
+      defaultFsType: ext4
+      defaultMkfsParams: ""
+      defaultClassReplicaCount: 3 # if you create a volume on longhorn, how many replicas does it try to create of that
+      defaultDataLocality: disabled # wether Longhorn should try to keep volumes on the same node as the pod that uses it
+      reclaimPolicy: Delete
+      migratable: false
+
+    csi:
+      kubeletRootDir: ~
+      attacherReplicaCount: 3
+      provisionerReplicaCount: 3
+      resizerReplicaCount: 3
+      snapshotterReplicaCount: 3
+
+    defaultSettings:
+      createDefaultDiskLabeledNodes: ~ # enable this to only create disks on nodes with "node.longhorn.io/create-default-disk=true"
+      defaultDataPath: /dev/sdb
+      storageOverProvisioningPercentage: ~
+      storageMinimalAvailablePercentage: ~
+      defaultReplicaCount: 3
+      defaultLonghornStaticStorageClass: ~
+      failedBackupTTL: ~ # number of minutes allowed for backup execution
+      taintToleration: ~
+      engineReplicaTimeout: ~
+      replicaFileSyncHttpClientTimeout: ~
+
+    defaultBackupStore:
+      backupTarget: ~
+      backupTargetCredentialSecret: ~
+      pollInterval: ~
+
+    longhornUI:
+      replicas: 1
+
+    httproute:
+      # -- Setting that allows Longhorn to generate HTTPRoute records for the Longhorn UI service using Gateway API.
+      enabled: false
+      # -- Gateway references for HTTPRoute. Specify which Gateway(s) should handle this route.
+      parentRefs: []
+      ## Example:
+      # - name: gateway-name
+      #   namespace: gateway-namespace
+      #   # Optional fields with defaults:
+      #   # group: gateway.networking.k8s.io  # default
+      #   # kind: Gateway                      # default
+      #   # sectionName: https                 # optional, targets a specific listener
+      # -- List of hostnames for the HTTPRoute. Multiple hostnames are supported.
+      hostnames: []
+      ## Example:
+      # - longhorn.example.com
+      # - longhorn.example.org
+      # -- Default path for HTTPRoute. You can access the Longhorn UI by following the full path.
+      path: /
+      # -- Path match type for HTTPRoute. (Options: "Exact", "PathPrefix")
+      pathType: PathPrefix
+      # -- Annotations for the HTTPRoute resource in the form of key-value pairs.
+      annotations: {}
+      ## Example:
+      #  annotation-key1: "annotation-value1"
