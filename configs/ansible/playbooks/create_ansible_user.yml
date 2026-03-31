@@ -38,21 +38,11 @@
       become: true
     - name: Check if ssh connection as ansible user already works
       ansible.builtin.shell:
-        cmd: ssh "ansible@{{ ansible_host }}" -p {{ ssh_port }} -o ConnectTimeout=3 -- echo "Hello SSH!" || "denied"
+        cmd: ssh "ansible@{{ ansible_host }}" -p {{ ssh_port }} -o ConnectTimeout=3 -- echo "Hello SSH!" || echo "denied"
       delegate_to: localhost
+      ignore_errors: true
       changed_when: false
       register: ssh_as_ansible
-    - name: Test ssh connection with ansible user
-      ansible.builtin.command:
-        argv:
-          - ssh
-          - "ansible@{{ ansible_host }}"
-          - -p
-          - "{{ ssh_port }}"
-          - --
-          - echo "Hello SSH!"
-      delegate_to: localhost
-      register:
     - name: Safely adjust sshd config
       when: ssh_as_ansible.stdout == "denied"
       block:
