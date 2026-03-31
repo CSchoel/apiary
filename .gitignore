@@ -15,3 +15,4 @@ user_data.yml
 user_data.yaml
 network-config.yml
 network-config.yaml
+*_answerfile.toml
