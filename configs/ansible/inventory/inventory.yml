@@ -1,8 +1,8 @@
 hive:
   hosts:
-    hive-proxmox:
+    hive01-proxmox:
       ansible_user: ansible
-      ansible_host: 192.168.178.66
+      ansible_host: 192.168.178.202
       ansible_port: "{{ ssh_port }}"
       ansible_become: true # become root by default
       proxmox_root_password: "{{ proxmox_ansible_password }}"

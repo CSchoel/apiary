@@ -1,7 +1,7 @@
 # must be used with inventory_root.yml
 - name: Create ansible user that can be accessed via SSH
   hosts:
-    - hive-proxmox
+    - hive01-proxmox
     - hive02-proxmox
     - mh-frame01
   vars_files:

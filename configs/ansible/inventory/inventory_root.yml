@@ -1,9 +1,9 @@
 hive:
   hosts:
-    hive-proxmox:
+    hive01-proxmox:
       ansible_user: root
       ansible_password: "{{ proxmox_ansible_password }}"
-      ansible_host: 192.168.178.66
+      ansible_host: 192.168.178.202
       ansible_python_interpreter: /usr/bin/python3.13
       proxmox_host: hive
     hive02-proxmox:
