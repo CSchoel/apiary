@@ -12,7 +12,7 @@ DATA_PATH="/etc/proxmox-auto-install-assistant"
 if [[ $# -eq 0 ]]; then
     TEMPLATE_FILE="$SCRIPT_DIR/../hive01_answerfile.toml.gotmpl"
 else
-    TEMPLATE_FILE="$1"
+    TEMPLATE_FILE="$(realpath $1)"
 fi
 ANSWER_FILE="${TEMPLATE_FILE%.gotmpl}"
 echo "Building container for running proxmox-auto-install-assistant .."

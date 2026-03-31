@@ -1,0 +1,24 @@
+[global]
+keyboard = "de"
+country = "de"
+fqdn = "hive02.local"
+mailto = "christopher.schoelzel@mailbox.org"
+timezone = "Europe/Berlin"
+root-password-hashed = "{{.hive02_root_password}}"
+root-ssh-keys = [
+    "{{.beekeeper_ssh_pubkey}}"
+]
+
+[network]
+source = "from-answer"
+cidr = "192.168.178.202/24"
+dns = "192.168.178.1"
+gateway = "192.168.178.1"
+filter.ID_PCI_SUBCLASS_FROM_DATABASE = "Ethernet controller"
+
+[network.interface-name-pinning]
+enabled = true
+
+[disk-setup]
+filesystem = "ext4"
+disk-list = ["dev/sda"]

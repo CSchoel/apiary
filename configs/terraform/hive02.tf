@@ -170,6 +170,11 @@ resource "proxmox_virtual_environment_storage_lvmthin" "h02_frame01_kube_data" {
   content = ["rootdir"]
 }
 
+variable "hive02_root_password" {
+  type      = string
+  sensitive = true
+}
+
 resource "proxmox_virtual_environment_file" "h02_bottom_board_user_data" {
   provider     = proxmox.hive02
   content_type = "snippets"
