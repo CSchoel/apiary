@@ -51,5 +51,6 @@ resource "proxmox_virtual_environment_download_file" "h01_debian_cloud_image_lxc
   content_type = "vztmpl"
   datastore_id = "local"
   node_name    = "hive01"
-  url          = "https://fra1lxdmirror01.do.letsbuildthe.cloud/images/debian/trixie/amd64/default/20260318_05:24/rootfs.tar.xz"
+  url          = "https://fra1lxdmirror01.do.letsbuildthe.cloud/images/debian/trixie/amd64/default/20260331_05:24/rootfs.tar.xz"
+  overwrite    = false
 }
