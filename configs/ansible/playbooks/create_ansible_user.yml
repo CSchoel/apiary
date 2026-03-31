@@ -36,7 +36,25 @@
         # %s references the temporary file created by ansible
         validate: /usr/sbin/visudo -cf %s
       become: true
+    - name: Check if ssh connection as ansible user already works
+      ansible.builtin.shell:
+        cmd: ssh "ansible@{{ ansible_host }}" -p {{ ssh_port }} -o ConnectTimeout=3 -- echo "Hello SSH!" || "denied"
+      delegate_to: localhost
+      changed_when: false
+      register: ssh_as_ansible
+    - name: Test ssh connection with ansible user
+      ansible.builtin.command:
+        argv:
+          - ssh
+          - "ansible@{{ ansible_host }}"
+          - -p
+          - "{{ ssh_port }}"
+          - --
+          - echo "Hello SSH!"
+      delegate_to: localhost
+      register:
     - name: Safely adjust sshd config
+      when: ssh_as_ansible.stdout == "denied"
       block:
         - name: Start a temporary backup sshd service on another port
           ansible.builtin.command:
@@ -55,6 +73,13 @@
             mode: 644
           notify: Restart sshd
           become: true
+        - name: Flush handlers
+          meta: flush_handlers
+        - name: Wait for restart
+          ansible.builtin.wait_for:
+            host: "{{ ansible_host }}"
+            port: "{{ ssh_port }}"
+            connect_timeout: 5
         - name: Test ssh connection
           ansible.builtin.command:
             argv:
