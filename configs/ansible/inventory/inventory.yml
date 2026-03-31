@@ -25,3 +25,17 @@ apiary:
       ansible_python_interpreter: /usr/bin/python3.13
       extra_users: beekeeper
       ansible_become: true # become root by default
+    h02-bottom-board:
+      ansible_user: ansible
+      ansible_host: 192.168.178.203
+      ansible_port: "{{ ssh_port }}"
+      ansible_python_interpreter: /usr/bin/python3.13
+      extra_users: beekeeper
+      ansible_become: true # become root by default
+    h02-frame01:
+      ansible_user: ansible
+      ansible_host: 192.168.178.204
+      ansible_port: "{{ ssh_port }}"
+      ansible_python_interpreter: /usr/bin/python3.13
+      extra_users: beekeeper
+      ansible_become: true # become root by default
