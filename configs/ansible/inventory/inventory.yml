@@ -5,6 +5,7 @@ hive:
       ansible_host: 192.168.178.202
       ansible_port: "{{ ssh_port }}"
       ansible_become: true # become root by default
+      ansible_python_interpreter: /usr/bin/python3.13
       proxmox_root_password: "{{ proxmox_ansible_password }}"
       proxmox_token: "{{ proxmox_api_token_secret }}"
       proxmox_host: hive
@@ -13,6 +14,7 @@ hive:
       ansible_host: 192.168.178.67
       ansible_port: "{{ ssh_port }}"
       ansible_become: true # become root by default
+      ansible_python_interpreter: /usr/bin/python3.13
       proxmox_root_password: "{{ proxmox02_ansible_password }}"
       proxmox_token: "{{ proxmox_02_api_token_secret }}"
       proxmox_host: hive02
@@ -20,5 +22,6 @@ hive:
       ansible_user: ansible
       ansible_host: 192.168.178.58
       ansible_port: "{{ ssh_port }}"
+      ansible_python_interpreter: /usr/bin/python3.13
       extra_users: beekeeper
       ansible_become: true # become root by default
