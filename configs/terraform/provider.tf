@@ -39,8 +39,8 @@ provider "proxmox" {
     agent    = true # required to upload snippets
     username = "ansible"
     node {
-      name    = "hive"
-      address = "hive"
+      name    = "hive01"
+      address = "hive01"
       port    = var.hive_ssh_port
     }
   }

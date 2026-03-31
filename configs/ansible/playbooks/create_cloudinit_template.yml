@@ -1,6 +1,6 @@
 - name: Creates a basic debian cloudinit template to use in Terraform
   hosts:
-    - hive-proxmox
+    - hive01-proxmox
   debugger: on_failed
   vars:
     deb_name: trixie

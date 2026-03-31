@@ -1,6 +1,6 @@
 - name: Check cloud-init file on localhost by uploading it to proxmox
   hosts:
-    - hive-proxmox
+    - hive01-proxmox
   vars:
     user_data_file: string
   vars_files:

@@ -7,7 +7,7 @@
 resource "proxmox_virtual_environment_container" "cookies-and-stream" {
   provider     = proxmox.hive01
   description  = "Debian VM for TV connection"
-  node_name    = "hive"
+  node_name    = "hive01"
   tags         = ["terraform", "debian"]
   unprivileged = true
   cpu {
@@ -50,6 +50,6 @@ resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
   provider     = proxmox.hive01
   content_type = "vztmpl"
   datastore_id = "local"
-  node_name    = "hive"
+  node_name    = "hive01"
   url          = "https://fra1lxdmirror01.do.letsbuildthe.cloud/images/debian/trixie/amd64/default/20260318_05:24/rootfs.tar.xz"
 }

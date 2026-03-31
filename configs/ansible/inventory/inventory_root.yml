@@ -1,4 +1,4 @@
-hive:
+apiary:
   hosts:
     hive01-proxmox:
       ansible_user: root

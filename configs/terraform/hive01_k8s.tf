@@ -1,8 +1,8 @@
-resource "proxmox_virtual_environment_vm" "bottom-board" {
+resource "proxmox_virtual_environment_vm" "h01-bottom-board" {
   provider    = proxmox.hive01
-  name        = "bottom-board"
+  name        = "h01-bottom-board"
   description = "The bottom board of the beehive - The Kubernetes master node"
-  node_name   = "hive"
+  node_name   = "hive01"
   tags        = ["terraform", "debian", "kubernetes"]
   agent {
     # qemu-guest-agent is installed via cloudinit-template
@@ -41,11 +41,11 @@ resource "proxmox_virtual_environment_vm" "bottom-board" {
   }
 }
 
-resource "proxmox_virtual_environment_vm" "frame01" {
+resource "proxmox_virtual_environment_vm" "h01-frame01" {
   provider    = proxmox.hive01
-  name        = "frame01"
+  name        = "h01-frame01"
   description = "A frame in the beehive - a Kubernetes worker node"
-  node_name   = "hive"
+  node_name   = "hive01"
   tags        = ["terraform", "debian", "kubernetes"]
   agent {
     # qemu-guest-agent is installed via cloudinit-template
@@ -80,11 +80,11 @@ resource "proxmox_virtual_environment_vm" "frame01" {
         address = "dhcp"
       }
     }
-    user_data_file_id = proxmox_virtual_environment_file.frame01_user_data.id
+    user_data_file_id = proxmox_virtual_environment_file.h01-frame01_user_data.id
   }
 
   # need to initialize the master node before the worker
-  depends_on = [proxmox_virtual_environment_vm.bottom-board]
+  depends_on = [proxmox_virtual_environment_vm.h01-bottom-board]
 }
 
 variable "beekeeper_ssh_pubkey" {
@@ -114,12 +114,12 @@ resource "proxmox_virtual_environment_file" "bottom_board_user_data" {
   provider     = proxmox.hive01
   content_type = "snippets"
   datastore_id = "local"
-  node_name    = "hive"
+  node_name    = "hive01"
 
   source_raw {
     data = <<-EOF
     #cloud-config
-    hostname: bottom-board
+    hostname: h01-bottom-board
     keyboard:
       layout: de
     users:
@@ -144,16 +144,16 @@ resource "proxmox_virtual_environment_file" "bottom_board_user_data" {
   }
 }
 
-resource "proxmox_virtual_environment_file" "frame01_user_data" {
+resource "proxmox_virtual_environment_file" "h01-frame01_user_data" {
   provider     = proxmox.hive01
   content_type = "snippets"
   datastore_id = "local"
-  node_name    = "hive"
+  node_name    = "hive01"
 
   source_raw {
     data = <<-EOF
     #cloud-config
-    hostname: frame01
+    hostname: h01-frame01
     keyboard:
       layout: de
     users:
@@ -171,9 +171,9 @@ resource "proxmox_virtual_environment_file" "frame01_user_data" {
     package_reboot_if_required: true
     runcmd: # install k3s
       - "systemctl start qemu-guest-agent"
-      - "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${var.k3s_version} K3S_URL=https://bottom-board:6443 K3S_TOKEN=${var.k3s_node_token} sh -"
+      - "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${var.k3s_version} K3S_URL=https://h01-bottom-board:6443 K3S_TOKEN=${var.k3s_node_token} sh -"
     EOF
 
-    file_name = "frame01_user_data.yaml"
+    file_name = "h01-frame01_user_data.yaml"
   }
 }

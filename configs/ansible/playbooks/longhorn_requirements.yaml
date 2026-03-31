@@ -1,7 +1,7 @@
 # Reference: https://longhorn.io/docs/1.11.1/advanced-resources/os-distro-specific/csi-on-k3s/
 - name: Install requirements for longhorn
   hosts:
-    - hive-proxmox
+    - hive01-proxmox
     - hive02-proxmox
     - pi-burrow01
   vars_files:

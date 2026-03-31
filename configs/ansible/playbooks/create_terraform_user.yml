@@ -1,6 +1,6 @@
 - name: Create terraform user in Proxmox
   hosts:
-    - hive-proxmox
+    - hive01-proxmox
     - hive02-proxmox
   vars_files:
     - ../vars/credentials.yml

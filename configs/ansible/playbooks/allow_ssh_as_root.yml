@@ -1,7 +1,7 @@
 # must be used with inventory_root.yml
 - name: Allow to ssh into the root account
   hosts:
-    - hive-proxmox
+    - hive01-proxmox
     - hive02-proxmox
   vars_files:
     - ../vars/credentials.yml
