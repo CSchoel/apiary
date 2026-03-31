@@ -36,14 +36,42 @@
         # %s references the temporary file created by ansible
         validate: /usr/sbin/visudo -cf %s
       become: true
-    - name: Disallow any other connections
-      ansible.builtin.template:
-        src: ../templates/10-allow-local-connection.conf.jinja
-        dest: /etc/ssh/sshd_config.d/10-allow-local-connection.conf
-        validate: sshd -tf %s
-        mode: 644
-      notify: Restart sshd
-      become: true
+    - name: Safely adjust sshd config
+      block:
+        - name: Start a temporary backup sshd service on another port
+          ansible.builtin.command:
+            argv:
+              - sshd
+              - -p
+              - "2222"
+              - -f
+              - /dev/null # use empty config
+        - name: Disallow any other connections
+          ansible.builtin.template:
+            src: ../templates/10-allow-local-connection.conf.jinja
+            dest: /etc/ssh/sshd_config.d/10-allow-local-connection.conf
+            validate: sshd -tf %s
+            mode: 644
+          notify: Restart sshd
+          become: true
+        - name: Test ssh connection
+          ansible.builtin.ssh:
+            host: {{ ansible_host }}
+            port: 35813
+            remote_user: ansible
+            private_key_file: /home/kylar/.ssh/id_rsa
+        - name: Take down backup sshd service
+          ansible.builtin.command:
+            argv:
+              - pkill
+              - -f
+              - "sshd -p 2222"
+      rescue:
+        - name: Revert changes to sshd config
+          ansible.builtin.file:
+            path: /etc/ssh/sshd_config.d/10-allow-local-connection.conf
+            state: absent
+          notify: Restart sshd
   handlers:
     - name: Restart sshd
       ansible.builtin.service:
