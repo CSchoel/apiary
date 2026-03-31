@@ -7,9 +7,14 @@ network:
       optional: true
   wifis:
     wlan0:
-      dhcp4: true
+      dhcp4: false
+      addresses: [192.168.178.205/24]
       regulatory-domain: "DE"
       access-points:
         "{{.AP_name}}":
           password: "{{.AP_psk}}"
       optional: true
+      routes:
+        - to: default
+          via: 192.168.178.1
+          metric: 100

@@ -11,16 +11,16 @@ hive:
       proxmox_host: hive
     hive02-proxmox:
       ansible_user: ansible
-      ansible_host: 192.168.178.67
+      ansible_host: 192.168.178.201
       ansible_port: "{{ ssh_port }}"
       ansible_become: true # become root by default
       ansible_python_interpreter: /usr/bin/python3.13
       proxmox_root_password: "{{ proxmox02_ansible_password }}"
       proxmox_token: "{{ proxmox_02_api_token_secret }}"
       proxmox_host: hive02
-    mh-frame01:
+    pi-burrow01:
       ansible_user: ansible
-      ansible_host: 192.168.178.58
+      ansible_host: 192.168.178.205
       ansible_port: "{{ ssh_port }}"
       ansible_python_interpreter: /usr/bin/python3.13
       extra_users: beekeeper

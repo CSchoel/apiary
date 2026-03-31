@@ -3,7 +3,7 @@
   hosts:
     - hive01-proxmox
     - hive02-proxmox
-    - mh-frame01
+    - pi-burrow01
   vars_files:
     - ../vars/credentials.yml
   tasks:
