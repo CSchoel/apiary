@@ -5,7 +5,7 @@ apiary:
       ansible_password: "{{ proxmox_ansible_password }}"
       ansible_host: 192.168.178.202
       ansible_python_interpreter: /usr/bin/python3.13
-      proxmox_host: hive
+      proxmox_host: hive01
     hive02-proxmox:
       ansible_user: root
       ansible_password: "{{ proxmox02_ansible_password }}"

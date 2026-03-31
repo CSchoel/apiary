@@ -8,7 +8,7 @@ apiary:
       ansible_python_interpreter: /usr/bin/python3.13
       proxmox_root_password: "{{ proxmox_ansible_password }}"
       proxmox_token: "{{ proxmox_api_token_secret }}"
-      proxmox_host: hive
+      proxmox_host: hive01
     hive02-proxmox:
       ansible_user: ansible
       ansible_host: 192.168.178.201
