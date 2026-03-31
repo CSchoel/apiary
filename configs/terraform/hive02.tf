@@ -33,7 +33,7 @@ resource "proxmox_virtual_environment_vm" "h02-bottom-board" {
     import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
-    size         = 150 # TODO: shrink to 100
+    size         = 100
   }
 
   # attached disks from data VM
@@ -53,7 +53,8 @@ resource "proxmox_virtual_environment_vm" "h02-bottom-board" {
   initialization {
     ip_config {
       ipv4 {
-        address = "dhcp"
+        # Ensure that this is outside the range of IPs that your router distributes with DHCP
+        address = "192.168.178.203"
       }
     }
     user_data_file_id = proxmox_virtual_environment_file.h02_bottom_board_user_data.id
@@ -86,7 +87,7 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
     import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
-    size         = 250 # TODO: shrink to 100
+    size         = 100
   }
 
   # attached disks from data VM
@@ -106,7 +107,8 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
   initialization {
     ip_config {
       ipv4 {
-        address = "dhcp"
+        # Ensure that this is outside the range of IPs that your router distributes with DHCP
+        address = "192.168.178.204"
       }
     }
     user_data_file_id = proxmox_virtual_environment_file.h02_frame01_user_data.id
@@ -192,10 +194,11 @@ resource "proxmox_virtual_environment_file" "h02_bottom_board_user_data" {
     package_update: true # apt update
     packages:
       - qemu-guest-agent
+      - open-iscsi  # required for longhorn
     package_reboot_if_required: true
     runcmd: # install k3s
       - "systemctl start qemu-guest-agent"
-      - "curl -sfL https://get.k3s.io | K3S_TOKEN=${var.k3s_node_token} sh -"
+      - "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${var.k3s_version} K3S_TOKEN=${var.k3s_node_token} sh -"
     EOF
 
     file_name = "h02_bottom_board_user_data.yaml"
@@ -226,10 +229,11 @@ resource "proxmox_virtual_environment_file" "h02_frame01_user_data" {
     package_update: true # apt update
     packages:
       - qemu-guest-agent
+      - open-iscsi  # required for longhorn
     package_reboot_if_required: true
     runcmd: # install k3s
       - "systemctl start qemu-guest-agent"
-      - "curl -sfL https://get.k3s.io | K3S_URL=https://h02-bottom-board:6443 K3S_TOKEN=${var.k3s_node_token} sh -"
+      - "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${var.k3s_version} K3S_URL=https://h02-bottom-board:6443 K3S_TOKEN=${var.k3s_node_token} sh -"
     EOF
 
     file_name = "h02_frame01_user_data.yaml"

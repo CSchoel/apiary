@@ -101,6 +101,15 @@ variable "k3s_node_token" {
   sensitive = true
 }
 
+variable "hive01_root_password" {
+  type      = string
+  sensitive = true
+}
+
+variable "k3s_version" {
+  type = string
+}
+
 resource "proxmox_virtual_environment_file" "bottom_board_user_data" {
   provider     = proxmox.hive01
   content_type = "snippets"
@@ -128,7 +137,7 @@ resource "proxmox_virtual_environment_file" "bottom_board_user_data" {
     package_reboot_if_required: true
     runcmd: # install k3s
       - "systemctl start qemu-guest-agent"
-      - "curl -sfL https://get.k3s.io | K3S_TOKEN=${var.k3s_node_token} sh -"
+      - "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${var.k3s_version} K3S_TOKEN=${var.k3s_node_token} sh -"
     EOF
 
     file_name = "bottom_board_user_data.yaml"
@@ -162,7 +171,7 @@ resource "proxmox_virtual_environment_file" "frame01_user_data" {
     package_reboot_if_required: true
     runcmd: # install k3s
       - "systemctl start qemu-guest-agent"
-      - "curl -sfL https://get.k3s.io | K3S_URL=https://bottom-board:6443 K3S_TOKEN=${var.k3s_node_token} sh -"
+      - "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${var.k3s_version} K3S_URL=https://bottom-board:6443 K3S_TOKEN=${var.k3s_node_token} sh -"
     EOF
 
     file_name = "frame01_user_data.yaml"
