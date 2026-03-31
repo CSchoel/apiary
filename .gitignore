@@ -16,3 +16,6 @@ user_data.yaml
 network-config.yml
 network-config.yaml
 *_answerfile.toml
+
+# Script output
+out
