@@ -1,3 +1,11 @@
+resource "proxmox_virtual_environment_download_file" "h01_debian_cloud_image_qemu" {
+  provider     = proxmox.hive01
+  content_type = "import"
+  datastore_id = "local"
+  node_name    = "hive01"
+  url          = "https://cloud.debian.org/images/cloud/trixie/20260112-2355/debian-13-generic-amd64-20260112-2355.qcow2"
+}
+
 resource "proxmox_virtual_environment_vm" "h01-bottom-board" {
   provider    = proxmox.hive01
   name        = "h01-bottom-board"
@@ -21,7 +29,7 @@ resource "proxmox_virtual_environment_vm" "h01-bottom-board" {
 
   disk {
     datastore_id = "local-lvm"
-    import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
+    import_from  = proxmox_virtual_environment_download_file.h01_debian_cloud_image_qemu.id
     interface    = "scsi0"
     discard      = "on"
     size         = 150
@@ -64,7 +72,7 @@ resource "proxmox_virtual_environment_vm" "h01-frame01" {
 
   disk {
     datastore_id = "local-lvm"
-    import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
+    import_from  = proxmox_virtual_environment_download_file.h01_debian_cloud_image_qemu.id
     interface    = "scsi0"
     discard      = "on"
     size         = 150

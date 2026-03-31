@@ -30,7 +30,7 @@ resource "proxmox_virtual_environment_vm" "h02-bottom-board" {
 
   disk {
     datastore_id = "local-lvm"
-    import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
+    import_from  = proxmox_virtual_environment_download_file.h02_debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
     size         = 100
@@ -54,7 +54,8 @@ resource "proxmox_virtual_environment_vm" "h02-bottom-board" {
     ip_config {
       ipv4 {
         # Ensure that this is outside the range of IPs that your router distributes with DHCP
-        address = "192.168.178.203"
+        address = "192.168.178.203/24"
+        gateway = "192.168.178.1"
       }
     }
     user_data_file_id = proxmox_virtual_environment_file.h02_bottom_board_user_data.id
@@ -84,7 +85,7 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
 
   disk {
     datastore_id = "local-lvm"
-    import_from  = proxmox_virtual_environment_download_file.debian_cloud_image.id
+    import_from  = proxmox_virtual_environment_download_file.h02_debian_cloud_image.id
     interface    = "scsi0"
     discard      = "on"
     size         = 100
@@ -108,7 +109,8 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
     ip_config {
       ipv4 {
         # Ensure that this is outside the range of IPs that your router distributes with DHCP
-        address = "192.168.178.204"
+        address = "192.168.178.204/24"
+        gateway = "192.168.178.1"
       }
     }
     user_data_file_id = proxmox_virtual_environment_file.h02_frame01_user_data.id

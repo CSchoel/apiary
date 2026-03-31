@@ -25,7 +25,7 @@ resource "proxmox_virtual_environment_container" "cookies-and-stream" {
     size         = 100
   }
   operating_system {
-    template_file_id = proxmox_virtual_environment_download_file.debian_cloud_image.id
+    template_file_id = proxmox_virtual_environment_download_file.h01_debian_cloud_image_lxc.id
     type             = "debian"
   }
 
@@ -46,7 +46,7 @@ resource "proxmox_virtual_environment_container" "cookies-and-stream" {
   }
 }
 
-resource "proxmox_virtual_environment_download_file" "debian_cloud_image" {
+resource "proxmox_virtual_environment_download_file" "h01_debian_cloud_image_lxc" {
   provider     = proxmox.hive01
   content_type = "vztmpl"
   datastore_id = "local"
