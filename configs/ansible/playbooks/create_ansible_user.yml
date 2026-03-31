@@ -11,17 +11,14 @@
       ansible.builtin.user:
         name: ansible
         shell: /bin/bash
-      become: true
     - name: Allow current user to SSH into ansible user
       ansible.posix.authorized_key:
         user: ansible
         key: "{{ lookup('file', '/home/kylar/.ssh/id_rsa.pub') }}"
-      become: true
     - name: Install sudo
       ansible.builtin.package:
         name: sudo
         state: present
-      become: true
     - name: Add ansible user to sudoers
       ansible.builtin.lineinfile:
         path: /etc/sudoers.d/ansible-allow-to-sudo-all
@@ -35,7 +32,6 @@
         # -f provides alternative sudoers file name
         # %s references the temporary file created by ansible
         validate: /usr/sbin/visudo -cf %s
-      become: true
     - name: Check if ssh connection as ansible user already works
       ansible.builtin.shell:
         cmd: ssh "ansible@{{ ansible_host }}" -p {{ ssh_port }} -o ConnectTimeout=3 -- echo "Hello SSH!" || echo "denied"
@@ -54,7 +50,6 @@
               - "2222"
               - -f
               - /dev/null # use empty config
-          become: true
         - name: Disallow any other connections
           ansible.builtin.template:
             src: ../templates/10-allow-local-connection.conf.jinja
@@ -62,7 +57,6 @@
             validate: sshd -tf %s
             mode: 644
           notify: Restart sshd
-          become: true
         - name: Flush handlers
           meta: flush_handlers
         - name: Wait for restart
@@ -86,17 +80,14 @@
               - pkill
               - -f
               - "sshd -p 2222"
-          become: true
       rescue:
         - name: Revert changes to sshd config
           ansible.builtin.file:
             path: /etc/ssh/sshd_config.d/10-allow-local-connection.conf
             state: absent
           notify: Restart sshd
-          become: true
   handlers:
     - name: Restart sshd
       ansible.builtin.service:
         name: sshd
         state: restarted
-      become: true
