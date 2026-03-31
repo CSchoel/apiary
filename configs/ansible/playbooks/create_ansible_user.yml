@@ -4,6 +4,8 @@
     - hive01-proxmox
     - hive02-proxmox
     - pi-burrow01
+    - h02-bottom-board
+    - h02-frame01
   vars_files:
     - ../vars/credentials.yml
   tasks:
