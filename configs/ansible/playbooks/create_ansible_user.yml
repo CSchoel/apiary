@@ -41,11 +41,12 @@
         - name: Start a temporary backup sshd service on another port
           ansible.builtin.command:
             argv:
-              - sshd
+              - /usr/sbin/sshd
               - -p
               - "2222"
               - -f
               - /dev/null # use empty config
+          become: true
         - name: Disallow any other connections
           ansible.builtin.template:
             src: ../templates/10-allow-local-connection.conf.jinja
@@ -55,23 +56,29 @@
           notify: Restart sshd
           become: true
         - name: Test ssh connection
-          ansible.builtin.ssh:
-            host: {{ ansible_host }}
-            port: 35813
-            remote_user: ansible
-            private_key_file: /home/kylar/.ssh/id_rsa
+          ansible.builtin.command:
+            argv:
+              - ssh
+              - "ansible@{{ ansible_host }}"
+              - -p
+              - "{{ ssh_port }}"
+              - --
+              - echo "Hello SSH!"
+          delegate_to: localhost
         - name: Take down backup sshd service
           ansible.builtin.command:
             argv:
               - pkill
               - -f
               - "sshd -p 2222"
+          become: true
       rescue:
         - name: Revert changes to sshd config
           ansible.builtin.file:
             path: /etc/ssh/sshd_config.d/10-allow-local-connection.conf
             state: absent
           notify: Restart sshd
+          become: true
   handlers:
     - name: Restart sshd
       ansible.builtin.service:
