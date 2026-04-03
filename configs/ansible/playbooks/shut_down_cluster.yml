@@ -1,0 +1,11 @@
+- name: Shuts down all nodes in the cluster gracefully
+  hosts:
+    - hive01-proxmox
+    - hive02-proxmox
+    - pi-burrow01
+  vars_files:
+    - ../vars/credentials.yml
+  tasks:
+    - name: Shut down host
+      community.general.shutdown:
+        delay: 0
