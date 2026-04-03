@@ -1,0 +1,18 @@
+# Reference: https://docs.k3s.io/add-ons/helm
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  annotations:
+    helmcharts.cattle.io/managed-by: helm-controller
+  finalizers:
+    - wrangler.cattle.io/on-helm-chart-remove
+  generation: 1
+  name: lt-install
+  namespace: default
+spec:
+  repo: https://cschoel.github.io/brood-chamber
+  chart: languagetool
+  targetNamespace: languagetool
+  createNamespace: true
+  version: v0.2.0
+  failurePolicy: abort
