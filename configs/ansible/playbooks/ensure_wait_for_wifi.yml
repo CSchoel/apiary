@@ -1,0 +1,39 @@
+- name: Ensure that sshd waits for wifi access before startup
+  hosts:
+    - pi-burrow01
+  vars_files:
+    - ../vars/credentials.yml
+  tasks:
+    # By default, NetworkManager-wait-only only waits until the service is up,
+    # not until there is connectivity.
+    # To change this, we need to remove the `-s` flag to nm-online in the systemd config file.
+    - name: Create directory for override of NetworkManager-wait-online.service
+      ansible.builtin.file:
+        mode: 0755
+        state: directory
+        path: /etc/systemd/system/NetworkManager-wait-online.service.d
+    - name: Adjusts NetworkManager-wait-online to actually wait for connectivity
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/NetworkManager-wait-online.service.d/override.conf
+        mode: 0644
+        content: |
+          [Service]
+          ExecStart=/usr/bin/nm-online -q
+    # As a fallback mechanism, we also configure the systemd service to restart on a
+    # bind error. This is needed, because the exit state on a bind error is 255 and
+    # by default, the sshd service does not restart if it receives that exit code
+    # because this exit code could also signify an incorrect configuration file.
+    # Reference: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=923508
+    - name: Create directory for override of ssh.service
+      ansible.builtin.file:
+        mode: 0755
+        state: directory
+        path: /etc/systemd/system/ssh.service.d
+    - name: Create script that starts sshd if it is down
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/ssh.service.d/override.conf
+        mode: 0644
+        content: |
+          [Service]
+          RestartPreventExitStatus=
+          RestartSec=1min
