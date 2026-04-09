@@ -13,6 +13,9 @@ resource "proxmox_virtual_environment_vm" "h02-bottom-board" {
   description = "The bottom board of the beehive - The Kubernetes master node"
   node_name   = "hive02"
   tags        = ["terraform", "debian", "kubernetes"]
+  lifecycle {
+    prevent_destroy = true
+  }
   agent {
     # qemu-guest-agent is installed via cloudinit-template
     enabled = true
@@ -68,6 +71,9 @@ resource "proxmox_virtual_environment_vm" "h02-frame01" {
   description = "A frame in the beehive - a Kubernetes worker node"
   node_name   = "hive02"
   tags        = ["terraform", "debian", "kubernetes"]
+  lifecycle {
+    prevent_destroy = true
+  }
   agent {
     # qemu-guest-agent is installed via cloudinit-template
     enabled = true
@@ -141,6 +147,10 @@ resource "proxmox_virtual_environment_vm" "h02-data" {
   node_name = "hive02"
   started   = false
   on_boot   = false
+
+  lifecycle {
+    prevent_destroy = true
+  }
 
   # Data disk for bottom-board
   disk {
