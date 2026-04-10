@@ -1,5 +1,7 @@
 # How to enable (NVIDIA) GPU workloads on k3s
 
+Reference: https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/
+
 * Install `nvidia-container-toolkit`
 * `sudo nvidia-ctk runtime configure --runtime=containerd`
 * `sudo systemctl restart containerd`
