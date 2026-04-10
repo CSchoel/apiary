@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - ollama-deploy.yaml
+  - nvidia-k8s-device-plugin.yaml

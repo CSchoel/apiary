@@ -22,8 +22,12 @@ spec:
           volumeMounts:
             - name: ollama-config
               mountPath: /root/.ollama
+          resources:
+            limits:
+              nvidia.com/gpu: 1
       volumes:
         - name: ollama-config
           hostPath:
             path: /mnt/data/software/linux/ollama
             type: Directory
+      runtimeClassName: nvidia
