@@ -1,0 +1,24 @@
+# Reference: https://docs.k3s.io/add-ons/helm
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  annotations:
+    helmcharts.cattle.io/managed-by: helm-controller
+  finalizers:
+    - wrangler.cattle.io/on-helm-chart-remove
+  generation: 1
+  name: nvidia-device-plugin
+  namespace: kube-system
+spec:
+  repo: https://nvidia.github.io/k8s-device-plugin
+  chart: nvidia-device-plugin
+  targetNamespace: nvidia-device-plugin
+  createNamespace: true
+  version: v0.19.0
+  failurePolicy: abort
+  valuesContent: |
+    runtimeClassName: nvidia
+    gfd:
+      enabled: true
+    nfd:
+      enableNodeFeatureApi: true
